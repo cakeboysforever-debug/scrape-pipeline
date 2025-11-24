@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
+import csv
 import json
 import logging
 import sqlite3
 from pathlib import Path
 from typing import Iterable, Mapping
-
-import pandas as pd
 
 LOGGER = logging.getLogger(__name__)
 
@@ -26,8 +25,17 @@ def write_jsonl(path: Path, records: Iterable[Mapping[str, object]]) -> None:
 
 def write_csv(path: Path, records: Iterable[Mapping[str, object]]) -> None:
     ensure_dir(path.parent)
-    frame = pd.DataFrame(list(records))
-    frame.to_csv(path, index=False)
+    rows = list(records)
+    if not rows:
+        path.write_text("")
+        return
+
+    # Build a stable header that covers all keys from the payload.
+    fieldnames: list[str] = sorted({key for row in rows for key in row.keys()})
+    with path.open("w", newline="", encoding="utf-8") as fp:
+        writer = csv.DictWriter(fp, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def write_sqlite(db_path: Path, records: Iterable[Mapping[str, object]]) -> None:
