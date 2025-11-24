@@ -3,16 +3,19 @@
 from typing import Iterable, List, Mapping
 
 
-def fetch_comments(keywords: Iterable[str], limit: int = 50) -> List[Mapping[str, object]]:
-    """Placeholder for YouTube Data API or youtube-dl extraction."""
+def fetch_contacts(keywords: Iterable[str], limit: int = 50, proxies: Iterable[str] | None = None) -> List[Mapping[str, object]]:
+    """Placeholder for `youtube-dl`/`yt-dlp` comment + metadata scraping."""
+
+    _ = proxies  # placeholder until wired into real requests
 
     return [
         {
             "source": "youtube",
             "keyword": keyword,
-            "video_title": f"{keyword} deep dive",
-            "comment": "Informative content!",
-            "video_url": "https://youtube.com/watch?v=example",
+            "handle": f"channel_{idx}",
+            "email": None,
+            "url": "https://youtube.com/watch?v=example",
+            "note": f"Commenter on a {keyword} video",
         }
-        for keyword in keywords
+        for idx, keyword in enumerate(keywords, start=1)
     ][:limit]

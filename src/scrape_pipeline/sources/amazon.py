@@ -3,17 +3,19 @@
 from typing import Iterable, List, Mapping
 
 
-def fetch_reviews(keywords: Iterable[str], limit: int = 50) -> List[Mapping[str, object]]:
-    """Placeholder for Amazon scraping or Product Advertising API calls."""
+def fetch_contacts(keywords: Iterable[str], limit: int = 50, proxies: Iterable[str] | None = None) -> List[Mapping[str, object]]:
+    """Placeholder for public Amazon page scraping (no API keys)."""
+
+    _ = proxies  # placeholder until wired into real requests
 
     return [
         {
             "source": "amazon",
             "keyword": keyword,
-            "title": f"Sample product for {keyword}",
-            "review": "Great product!",
-            "rating": 4.5,
+            "handle": f"seller_{idx}",
+            "email": None,
             "url": "https://amazon.com/example",
+            "note": f"Seller or reviewer mentioning {keyword}",
         }
-        for keyword in keywords
+        for idx, keyword in enumerate(keywords, start=1)
     ][:limit]

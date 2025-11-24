@@ -5,6 +5,7 @@ beautifulsoup4>=4.12
 requests>=2.31
 
 # Source-specific (install what you need)
+snscrape>=0.7.0.20230622
 praw>=7.7
 snscrape>=0.7.0.20230622
 prawcore>=2.3

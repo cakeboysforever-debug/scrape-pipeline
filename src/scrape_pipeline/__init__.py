@@ -4,5 +4,6 @@ __all__ = [
     "niche_identification",
     "pipeline",
     "storage",
+    "proxies",
     "sources",
 ]

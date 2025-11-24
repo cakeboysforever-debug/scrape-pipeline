@@ -3,21 +3,24 @@
 from typing import Iterable, List, Mapping
 
 
-def fetch_questions(keywords: Iterable[str], limit: int = 50) -> List[Mapping[str, object]]:
+def fetch_contacts(keywords: Iterable[str], limit: int = 50, proxies: Iterable[str] | None = None) -> List[Mapping[str, object]]:
     """Placeholder for Quora scraping.
 
-    Replace with selenium or quora-scraper calls that handle pagination and
-    login/cookies if required.
+    Swap this stub with selenium or quora-scraper flows that collect authors
+    who answer or ask in the niche. Email capture will often require visiting
+    profiles; keep data collection compliant with Quora policies.
     """
 
-    joined = ", ".join(keywords)
+    _ = proxies  # placeholder until wired into real requests
+
     return [
         {
             "source": "quora",
-            "keywords": joined,
-            "question": f"How does {kw} work?",
-            "answer_excerpt": "Sample answer text...",
-            "url": "https://www.quora.com/example",
+            "keyword": kw,
+            "handle": f"quora_user_{idx}",
+            "email": None,
+            "url": "https://www.quora.com/profile/example",
+            "note": f"Answered a question about {kw}",
         }
-        for kw in keywords
+        for idx, kw in enumerate(keywords, start=1)
     ][:limit]
