@@ -14,14 +14,23 @@ A step-by-step scraping pipeline blueprint focused on collecting **usernames and
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-./bin/scrape_pipeline --help   # or: python -m scrape_pipeline --help
+export PYTHONPATH=src  # make the package importable without an editable install
+./bin/scrape_pipeline --help
 python -m scrape_pipeline.pipeline --preview
+
+# Or use the Makefile helpers for repeatable automation:
+make            # show available targets and overridable variables
+make install    # create .venv and install requirements
+make preview \  # dry-run with default keywords and configurable limit
+  LIMIT=3
+make run \      # real run with JSON/CSV + SQLite persistence
+  OUTPUT=data/latest \
+  LIMIT=25 KEYWORDS="ai tools" "marketing"
 ```
 
 - `--preview` skips live network calls and shows what each stage would do.
   - `scrape_pipeline --help` shows all flags without running the pipeline.
   - `man scrape_pipeline` (see below) opens the manual page.
-  - `--preview` skips live network calls and shows what each stage would do.
 
 ## Project Structure
 
