@@ -1,0 +1,12 @@
+# Core utilities
+pandas>=2.2
+python-dotenv>=1.0
+beautifulsoup4>=4.12
+requests>=2.31
+
+# Source-specific (install what you need)
+snscrape>=0.7.0.20230622
+selenium>=4.0
+quora-scraper==1.0.7
+scrapy>=2.11
+youtube_dl>=2021.12.17
