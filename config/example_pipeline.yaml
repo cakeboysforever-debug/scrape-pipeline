@@ -1,0 +1,24 @@
+niches:
+  - topic: "weight loss supplements"
+    affiliate_payout: 35
+    urgent_intent_score: 0.85
+    evergreen_score: 0.7
+    search_volume: 22000
+  - topic: "personal cybersecurity"
+    affiliate_payout: 45
+    urgent_intent_score: 0.9
+    evergreen_score: 0.65
+    search_volume: 18000
+  - topic: "passive income apps"
+    affiliate_payout: 25
+    urgent_intent_score: 0.75
+    evergreen_score: 0.6
+    search_volume: 12000
+
+sources:
+  - Reddit
+  - Quora
+  - Twitter/X
+  - Amazon
+  - YouTube
+  - Forums
