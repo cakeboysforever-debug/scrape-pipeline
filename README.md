@@ -14,6 +14,7 @@ A step-by-step scraping pipeline blueprint focused on collecting **usernames and
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+pip check                 # verify dependency consistency
 export PYTHONPATH=src  # make the package importable without an editable install
 ./bin/scrape_pipeline --help
 python -m scrape_pipeline.pipeline --preview
@@ -31,6 +32,7 @@ make run \      # real run with JSON/CSV + SQLite persistence
 - `--preview` skips live network calls and shows what each stage would do.
   - `scrape_pipeline --help` shows all flags without running the pipeline.
   - `man scrape_pipeline` (see below) opens the manual page.
+- Need a hand-holding walkthrough? See [docs/beginner_walkthrough.md](docs/beginner_walkthrough.md) for a step-by-step path that stays in preview mode until you are comfortable.
 
 ## Project Structure
 
@@ -107,6 +109,28 @@ python -m scrape_pipeline.pipeline \
   ```bash
   MANPATH="$(pwd)/man:${MANPATH}" man scrape_pipeline
   ```
+
+### Beginner-friendly "first scrape" recipe
+
+Try this flow if you have never scraped before:
+
+1. **Preview only (safe)** — generates fake rows so you can explore the outputs without touching real sites:
+
+   ```bash
+   python -m scrape_pipeline.pipeline --preview --keywords "ai tools" "weight loss" --limit 3
+   ```
+
+2. **Open the outputs** — inspect `data/latest/*.jsonl` or `*.csv` to see the expected fields, and check `data/contacts.db` with `sqlite3` or a GUI.
+
+3. **Swap in one real scraper** — edit a single adapter in `src/scrape_pipeline/sources/` (e.g., `reddit.py`) to add your scraping logic while keeping the return shape the same.
+
+4. **Run a tiny real scrape** — keep limits low to avoid hammering servers:
+
+   ```bash
+   python -m scrape_pipeline.pipeline --keywords "your niche" --limit 5 --output-dir data/runs/$(date +%Y-%m-%d)
+   ```
+
+5. **Iterate politely** — respect Terms of Service, add delays in your scrapers, and use `--proxy`/`--proxy-file` if you hit blocks.
 
 ### Use free proxies (optional)
 
