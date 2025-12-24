@@ -6,6 +6,7 @@ A step-by-step scraping pipeline blueprint focused on collecting **usernames and
 - **Scraping adapters** for Reddit, Quora, Twitter/X, Amazon, YouTube, and generic forums that return contact handles.
 - **Data storage** helpers for JSON/CSV outputs plus a deduplicated SQLite contact table.
 - **Runner** to orchestrate the pipeline with simple configuration.
+- **Proxy helpers** to rotate free/public proxies when you need to reduce blocking risk.
 
 ## Quickstart
 
@@ -13,10 +14,25 @@ A step-by-step scraping pipeline blueprint focused on collecting **usernames and
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+pip check                 # verify dependency consistency
+export PYTHONPATH=src  # make the package importable without an editable install
+./bin/scrape_pipeline --help
 python -m scrape_pipeline.pipeline --preview
+
+# Or use the Makefile helpers for repeatable automation:
+make            # show available targets and overridable variables
+make install    # create .venv and install requirements
+make preview \  # dry-run with default keywords and configurable limit
+  LIMIT=3
+make run \      # real run with JSON/CSV + SQLite persistence
+  OUTPUT=data/latest \
+  LIMIT=25 KEYWORDS="ai tools" "marketing"
 ```
 
 - `--preview` skips live network calls and shows what each stage would do.
+  - `scrape_pipeline --help` shows all flags without running the pipeline.
+  - `man scrape_pipeline` (see below) opens the manual page.
+- Need a hand-holding walkthrough? See [docs/beginner_walkthrough.md](docs/beginner_walkthrough.md) for a step-by-step path that stays in preview mode until you are comfortable.
 
 ## Project Structure
 
@@ -25,6 +41,7 @@ src/scrape_pipeline/
   niche_identification.py   # demand scoring + prioritization helpers
   pipeline.py               # orchestration CLI entrypoint
   storage.py                # JSON/CSV writers + SQLite contact sink
+  proxies.py                # proxy rotation helpers (file + inline)
   sources/
     reddit.py               # Reddit adapter (Pushshift/scrape-ready)
     quora.py                # Quora adapter (selenium/quora-scraper ready)
@@ -38,6 +55,7 @@ src/scrape_pipeline/
 
 - This pipeline leans on public-page tooling: `snscrape` for Twitter/X, `youtube-dl` for YouTube comments/metadata, and `requests` + `BeautifulSoup`/`Scrapy`/`selenium` for forums, Amazon, Quora, and Reddit. No API secrets are necessary.
 - Customize keywords and sources in `pipeline.py` (see the `SOURCE_BUILDERS` mapping).
+- Rotate free proxies via `--proxy`/`--proxy-file` to avoid rate limits.
 
 ## Step-by-Step Flow
 
@@ -77,6 +95,65 @@ python -m scrape_pipeline.pipeline \
 - Creates per-source JSONL/CSV files in the output directory.
 - Deduplicates contacts into `data/contacts.db` (table: `contacts`).
 - Remove `--preview` to enable real network calls once your scraping logic is filled in.
+
+### CLI help and manual page
+
+- Show command help:
+
+  ```bash
+  ./bin/scrape_pipeline --help
+  ```
+
+- Read the man page from this repo (without installing system-wide):
+
+  ```bash
+  MANPATH="$(pwd)/man:${MANPATH}" man scrape_pipeline
+  ```
+
+### Beginner-friendly "first scrape" recipe
+
+Try this flow if you have never scraped before:
+
+1. **Preview only (safe)** — generates fake rows so you can explore the outputs without touching real sites:
+
+   ```bash
+   python -m scrape_pipeline.pipeline --preview --keywords "ai tools" "weight loss" --limit 3
+   ```
+
+2. **Open the outputs** — inspect `data/latest/*.jsonl` or `*.csv` to see the expected fields, and check `data/contacts.db` with `sqlite3` or a GUI.
+
+3. **Swap in one real scraper** — edit a single adapter in `src/scrape_pipeline/sources/` (e.g., `reddit.py`) to add your scraping logic while keeping the return shape the same.
+
+4. **Run a tiny real scrape** — keep limits low to avoid hammering servers:
+
+   ```bash
+   python -m scrape_pipeline.pipeline --keywords "your niche" --limit 5 --output-dir data/runs/$(date +%Y-%m-%d)
+   ```
+
+5. **Iterate politely** — respect Terms of Service, add delays in your scrapers, and use `--proxy`/`--proxy-file` if you hit blocks.
+
+### Use free proxies (optional)
+
+Free/public proxies can be noisy or short-lived; always test before production use.
+
+1. Grab a list from a free provider (examples):
+   - https://www.sslproxies.org/
+   - https://free-proxy-list.net/
+   - GitHub mirrors such as https://github.com/roosterkid/openproxylist or https://github.com/prxchk/proxy-list
+2. Save them to `proxies.txt`, one per line (format: `http://host:port`). Comments with `#` are ignored.
+3. Run the pipeline with rotation enabled:
+
+```bash
+python -m scrape_pipeline.pipeline \
+  --keywords "niche keyword" \
+  --proxy-file proxies.txt \
+  --proxy http://additional-proxy:8080 \
+  --output-dir data/runs/with-proxies \
+  --db-path data/contacts.db
+```
+
+- The CLI de-duplicates proxies from the file and `--proxy` flags.
+- In stubs, proxies are logged; wire them into your HTTP client or `snscrape`/`requests` calls as needed.
 
 ## Extending
 

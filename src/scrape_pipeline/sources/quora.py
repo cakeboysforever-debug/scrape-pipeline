@@ -3,13 +3,15 @@
 from typing import Iterable, List, Mapping
 
 
-def fetch_contacts(keywords: Iterable[str], limit: int = 50) -> List[Mapping[str, object]]:
+def fetch_contacts(keywords: Iterable[str], limit: int = 50, proxies: Iterable[str] | None = None) -> List[Mapping[str, object]]:
     """Placeholder for Quora scraping.
 
     Swap this stub with selenium or quora-scraper flows that collect authors
     who answer or ask in the niche. Email capture will often require visiting
     profiles; keep data collection compliant with Quora policies.
     """
+
+    _ = proxies  # placeholder until wired into real requests
 
     return [
         {

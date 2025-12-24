@@ -3,12 +3,14 @@
 from typing import Iterable, List, Mapping
 
 
-def fetch_contacts(keywords: Iterable[str], limit: int = 50) -> List[Mapping[str, object]]:
+def fetch_contacts(keywords: Iterable[str], limit: int = 50, proxies: Iterable[str] | None = None) -> List[Mapping[str, object]]:
     """Placeholder for forum scraping logic.
 
     Build a Scrapy spider or requests + BeautifulSoup workflow that targets
     niche-specific forums. Ensure you follow robots.txt and TOS.
     """
+
+    _ = proxies  # placeholder until wired into real requests
 
     return [
         {

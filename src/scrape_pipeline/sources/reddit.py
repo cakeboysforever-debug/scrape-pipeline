@@ -7,7 +7,7 @@ def build_query(keywords: Iterable[str]) -> str:
     return " OR ".join(f"title:{kw}" for kw in keywords)
 
 
-def fetch_contacts(keywords: Iterable[str], limit: int = 50) -> List[Mapping[str, object]]:
+def fetch_contacts(keywords: Iterable[str], limit: int = 50, proxies: Iterable[str] | None = None) -> List[Mapping[str, object]]:
     """Placeholder for Reddit scraping without API keys.
 
     Swap this stub for a `snscrape`/Pushshift query or requests + BeautifulSoup
@@ -17,6 +17,7 @@ def fetch_contacts(keywords: Iterable[str], limit: int = 50) -> List[Mapping[str
     """
 
     query = build_query(keywords)
+    _ = proxies  # placeholder until wired into real requests
     return [
         {
             "source": "reddit",

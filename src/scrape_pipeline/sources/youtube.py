@@ -3,8 +3,10 @@
 from typing import Iterable, List, Mapping
 
 
-def fetch_contacts(keywords: Iterable[str], limit: int = 50) -> List[Mapping[str, object]]:
+def fetch_contacts(keywords: Iterable[str], limit: int = 50, proxies: Iterable[str] | None = None) -> List[Mapping[str, object]]:
     """Placeholder for `youtube-dl`/`yt-dlp` comment + metadata scraping."""
+
+    _ = proxies  # placeholder until wired into real requests
 
     return [
         {
